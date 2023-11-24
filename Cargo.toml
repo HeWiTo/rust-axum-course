@@ -13,3 +13,4 @@ axum = "0.6"
 
 [dev-dependencies]
 anyhow = "1"
+httpc-test = "0.1.1"
