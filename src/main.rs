@@ -1,19 +1,39 @@
 #![allow(unused)]
 
-use std::net::SocketAddr;
+pub use self::error::{
+    Error,
+    Result
+};
 
+use std::net::SocketAddr;
 use axum::{
     Router, 
-    response::{Html, IntoResponse},
-    routing::{get, get_service}, extract::{Query, Path},
+    response::{
+        Html, 
+        IntoResponse, Response
+    },
+    routing::{
+        get, 
+        get_service
+    }, 
+    extract::{
+        Query, 
+        Path
+    },
+    middleware,
 };
 use serde::Deserialize;
 use tower_http::services::ServeDir;
+
+mod error;
+mod web;
 
 #[tokio::main]
 async fn main() {
     let routes_all = Router::new()
         .merge(routes_hello())
+        .merge(web::routes_login::routes())
+        .layer(middleware::map_response(main_response_mapper))
         .fallback_service(routes_static());
 
     // region: --- Start server
@@ -24,6 +44,13 @@ async fn main() {
         .await
         .unwrap()
     // endregion: --- Start Server
+}
+
+async fn main_response_mapper(res: Response) -> Response {
+    println!("->> {:<12} - main_response_mapper", "RES_MAPPER");
+
+    println!();
+    res
 }
 
 fn routes_hello() -> Router {
