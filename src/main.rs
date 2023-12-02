@@ -23,6 +23,7 @@ use axum::{
     middleware,
 };
 use serde::Deserialize;
+use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
 
 mod error;
@@ -34,6 +35,7 @@ async fn main() {
         .merge(routes_hello())
         .merge(web::routes_login::routes())
         .layer(middleware::map_response(main_response_mapper))
+        .layer(CookieManagerLayer::new())
         .fallback_service(routes_static());
 
     // region: --- Start server
@@ -81,5 +83,4 @@ async fn handler_hello2(Path(name): Path<String>) -> impl IntoResponse {
     println!("->> {:12} - handler_hello2 - {name:#?}", "HANDLER");
 
     Html(format!("Hello2 <strong>{name}</strong>"))
-
 }
