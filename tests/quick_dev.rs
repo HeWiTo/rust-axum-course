@@ -10,7 +10,6 @@ async fn quick_dev() -> Result<()> {
     hc.do_get("/hello").await?.print().await?;
     hc.do_get("/hello?name=Rust").await?.print().await?;
     hc.do_get("/hello2/Henri").await?.print().await?;
-    // hc.do_get("/src/main.rs").await?.print().await?;
 
     let req_login = hc.do_post(
         "/api/login",
@@ -20,7 +19,8 @@ async fn quick_dev() -> Result<()> {
         })
     );
     req_login.await?.print().await?;
-
+    
+    /*
     let req_login_wrong_pwd = hc.do_post(
         "/api/login", 
         json!(
@@ -42,6 +42,7 @@ async fn quick_dev() -> Result<()> {
         ),
     );
     req_login_wrong_json.await?.print().await?;
+    */
     // pretty nice error handling, e.g. missing field in json
 	  // 422 Unprocessable Entity
 	  // Failed to deserialize the JSON body into the target type: missing field `pwd` at line 1 column 43
@@ -50,13 +51,13 @@ async fn quick_dev() -> Result<()> {
         "/api/tickets", 
         json!(
             {
-                "ticket": "Learn Rust"
+                "title": "Learn Rust"
             }
         ),
     );
     req_create_ticket.await?.print().await?;
     hc.do_get("/api/tickets").await?.print().await?;
-    //hc.do_delete("/api/tickets/1").await?.print().await?;
+    // hc.do_delete("/api/tickets/1").await?.print().await?;
     hc.do_get("/api/tickets").await?.print().await?;
 
     // won't always call this route because of cli spam, but nice to see that tokio even generates
