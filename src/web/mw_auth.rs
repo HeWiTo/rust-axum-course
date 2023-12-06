@@ -14,19 +14,13 @@ use lazy_regex::regex_captures;
 use tower_cookies::Cookies;
 
 pub async fn mw_require_auth<B>(
-    cookies: Cookies,
+    ctx: Result<Ctx>,
     req: Request<B>,
     next: Next<B>,
 ) -> Result<Response> {
-    println!("->> {:<12} - mw_require_auth", "MIDDLEWARE");
+    println!("->> {:<12} - mw_require_auth - {ctx:?}", "MIDDLEWARE");
 
-    let auth_token = cookies.get(AUTH_TOKEN).map(|c| c.value().to_string());
-
-    let (user_id, exp, sign) = auth_token
-        .ok_or(Error::AuthFailNoAuthTokenCookie)
-        .and_then(parse_token)?; // <-- The `?` returns early
-    
-    // TODO: Token components validation
+    ctx?;
 
     Ok(next.run(req).await)
 }
