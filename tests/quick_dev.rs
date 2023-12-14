@@ -3,6 +3,14 @@
 use anyhow::Result;
 use serde_json::json;
 
+// Server: cargo watch -q -c -w src/ -x run
+// Client: cargo watch -q -c -w tests/ -x "test -q quick_dev -- --nocapture"
+
+/* netstat -ano | grep :8080
+ * sudo lsof -t -i:8080
+ * sudo kill -9 3876
+ */
+
 #[tokio::test]
 async fn quick_dev() -> Result<()> {
     let hc = httpc_test::new_client("http://localhost:8080")?;
