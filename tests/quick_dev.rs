@@ -26,7 +26,7 @@ async fn quick_dev() -> Result<()> {
             "pwd": "welcome"
         })
     );
-    // req_login.await?.print().await?;
+    req_login.await?.print().await?;
     
     /*
     let req_login_wrong_pwd = hc.do_post(

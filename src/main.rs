@@ -5,7 +5,11 @@ pub use self::error::{
     Result
 };
 
-use crate::model::ModelController;
+use crate::{
+    model::ModelController, 
+    log::log_request,
+    ctx::Ctx,
+};
 use std::net::SocketAddr;
 use axum::{
     Router, 
@@ -22,7 +26,7 @@ use axum::{
         Path
     },
     handler::HandlerWithoutStateExt,
-    middleware, Json,
+    middleware, Json, http::{Uri, Method},
 };
 use serde_json::json;
 use serde::Deserialize;
@@ -31,6 +35,7 @@ use tower_http::services::ServeDir;
 use uuid::Uuid;
 
 mod ctx;
+mod log;
 mod error;
 mod model;
 mod web;
@@ -66,7 +71,12 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn main_response_mapper(res: Response) -> Response {
+async fn main_response_mapper(
+    ctx: Option<Ctx>,
+    uri: Uri,
+    req_method: Method,
+    res: Response,
+) -> Response {
     println!("->> {:<12} - main_response_mapper", "RES_MAPPER");
     let uuid = Uuid::new_v4();
 
@@ -91,9 +101,10 @@ async fn main_response_mapper(res: Response) -> Response {
             (*status_code, Json(client_error_body)).into_response()
         });
 
-    // -- TODO: Build and log line 
-    println!("  ->> server log line - {uuid} - Error: {service_error:?}");
-    
+    // Build and log line 
+    let client_error = client_status_error.unzip().1;
+    log_request(uuid, req_method, uri, ctx, service_error, client_error).await;
+
     println!();
     error_response.unwrap_or(res)
 }
