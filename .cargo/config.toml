@@ -1,0 +1,5 @@
+# Environments variables set for all `cargo...` commands.
+[env]
+
+# Scope down tracing, to filoter out external lib tracing.
+RUST_LOG="rust_web_app=debug"
