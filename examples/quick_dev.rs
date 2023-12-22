@@ -1,5 +1,5 @@
-// Server: cargo watch -q -c -w src/ -x run
-// Client: cargo watch -q -c -w tests/ -x "test -q quick_dev -- --nocapture"
+// Server: cargo watch -q -c -w src/ -w .cargo/ -x "run"
+// Client: cargo watch -q -c -w examples/ -x "run --example quick_dev -- --nocapture"
 
 /* netstat -ano | grep :8080
  * sudo lsof -t -i:8080
